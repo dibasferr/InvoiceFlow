@@ -53,17 +53,10 @@ public class Poofs {
         int escolha = sc.nextInt();
         sc.nextLine();
         switch (escolha){
-            case 1:
-                localizacao = Localizacao.PORTUGAL_CONTINENTAL;
-                break;
-            case 2:
-                localizacao = Localizacao.MADEIRA;
-                break;
-            case 3:
-                localizacao = Localizacao.ACORES;
-                break;
-            default:
-                System.out.println("Nao existe essa opçao!");
+            case 1 -> localizacao = Localizacao.PORTUGAL_CONTINENTAL;
+            case 2 -> localizacao = Localizacao.MADEIRA;
+            case 3 -> localizacao = Localizacao.ACORES;
+            default -> System.out.println("Nao existe essa opçao!");
         }
         if(localizacao == null){
             System.out.println("Nao foi possivel adicionar o cliente a lista!");
@@ -92,11 +85,49 @@ public class Poofs {
         String data = sc.nextLine();
 
         Fatura fatura = new Fatura(numeroFatura, cliente, data);
+
+        System.out.println("Insira o(s) produto(s) da fatura: ");
+        addProduto(fatura);
+
         empresa.addListaFatura(fatura);
         System.out.println("Fatura adicionada com sucesso a lista!");
     }
 
-    public void criarProduto(){
+    public void addProduto(Fatura fatura){
+        boolean continuar = true;
+        while (continuar){
+            System.out.println("Qual o tipo de produto que gostaria de adicionar a fatura?  (1 - Alimentar, 2 - Farmacia)");
+            int escolhaProduto = sc.nextInt();
+            sc.nextLine();
+            switch (escolhaProduto){
+                case 1 -> fatura.addProduto(criarProdutoAlimentar());
+                case 2 -> fatura.addProduto(criarProdutoFarmacia());
+                default -> System.out.println("Opção inválida!");
+            }
+
+            System.out.println("Deseja continuar a adicionar produtos na fatura? (SIM - digite '1')");
+            int conf = sc.nextInt();
+            sc.nextLine();
+            if(conf != 1){
+                break;
+            }
+        }
+    }
+
+    public Produto criarProdutoAlimentar(){
+        System.out.println("O produto e biologico?  (SIM - 1, NAO - 0)");
+        int verificaBiologico = sc.nextInt();
+        sc.nextLine();
+        if(verificaBiologico == 1){
+            boolean isBiologico = true;
+        }
+        else{
+            boolean isBiologico = false;
+        }
+
+    }
+
+    public Produto criarProdutoFarmacia(){
 
     }
 }
