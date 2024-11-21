@@ -6,11 +6,11 @@ public class Fatura {
     private String data;
     private ArrayList<Produto> produtos;
 
-    public Fatura(int numeroFatura, Cliente cliente, String data, ArrayList<Produto> produtos){
+    public Fatura(int numeroFatura, Cliente cliente, String data){
         this.numeroFatura = numeroFatura;
         this.cliente = cliente;
         this.data = data;
-        this.produtos = produtos;
+        this.produtos = new ArrayList<>();
     }
 
     public int getNumeroFatura(){ return numeroFatura; }
@@ -18,6 +18,10 @@ public class Fatura {
     public Cliente getCliente(){ return cliente; }
 
     public String getData(){ return data; }
+
+    public void addProduto(Produto produto){
+        produtos.add(produto);
+    }
 
     // Calula a quantidade de produtos na lista de produtos
     public int calcularNumProdutos(){

@@ -41,27 +41,29 @@ public class Empresa {
         return null;
     }
 
-    // Lista as todas as informaçoes dos clientes da liista de clientes
+    // Lista as todas as informaçoes dos clientes da lista de clientes
     public void listarClientes(){
-        System.out.println("----- Lista de clientes -----");
+        System.out.println("----- Lista de clientes -----\n");
         for(Cliente cliente : clientes){
             System.out.println("nome: " + cliente.getNome());
             System.out.println("contribuinte: " + cliente.getContribuinte());
             System.out.println("localizacao: " + cliente.getLocalizacao());
+            System.out.println("----------");
         }
     }
 
     // Lista as informacoes das faturas da lista de faturas
     public void listarFaturas(){
-        System.out.println("----- Lista de faturas -----");
+        System.out.println("----- Lista de faturas -----\n");
         for(Fatura fatura : faturas){
             System.out.println("numero da fatura: " + fatura.getNumeroFatura());
             System.out.println("data da fatura: " + fatura.getData());
-            System.out.println("cliente: " + fatura.getCliente());
+            System.out.println("cliente: " + fatura.getCliente().getNome());
             System.out.println("localizacao do cliente: " + fatura.getCliente().getLocalizacao());
             System.out.println("quantidade de produtos: " + fatura.calcularNumProdutos());
             System.out.println("valor total sem IVA: " + fatura.calcularValorSemIVA());
             System.out.println("valor total com IVA: " + fatura.calcularValorComIVA());
+            System.out.println("----------");
         }
     }
 }
