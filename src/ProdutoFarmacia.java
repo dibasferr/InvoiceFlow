@@ -4,8 +4,7 @@ public class ProdutoFarmacia extends Produto{
     private CategoriaFarmacia categoria;
 
     public ProdutoFarmacia(String codigo, String nome, String descricao, int quantidade, double valorUnitario,
-                           boolean hasPrescricao, String medicoPrescritor, CategoriaFarmacia categoria,
-                           Localizacao localizacao) {
+                           boolean hasPrescricao, String medicoPrescritor, CategoriaFarmacia categoria) {
         super(codigo, nome, descricao, quantidade, valorUnitario);
         this.hasPrescricao = hasPrescricao;
         this.medicoPrescritor = medicoPrescritor;

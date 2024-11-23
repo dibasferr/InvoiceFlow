@@ -1,3 +1,3 @@
 public enum CategoriaAlimentar {
-    CONGELADOS, ENLATADOS, VINHOS;
+    CONGELADOS, ENLATADOS, VINHOS, OUTROS;
 }

@@ -7,7 +7,7 @@ public class ProdutoAlimentar extends Produto{
     private CategoriaAlimentar categoria;
 
     public ProdutoAlimentar(String codigo, String nome, String descricao, int quantidade, double valorUnitario,
-                            boolean isBiologico, Taxa taxa, ArrayList<Certificacao> certificacoes, CategoriaAlimentar categoria, Localizacao localizacao){
+                            boolean isBiologico, Taxa taxa, ArrayList<Certificacao> certificacoes, CategoriaAlimentar categoria){
         super(codigo, nome, descricao, quantidade, valorUnitario);
         this.isBiologico = isBiologico;
         this.taxa = taxa;

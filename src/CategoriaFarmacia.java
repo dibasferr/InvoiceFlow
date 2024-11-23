@@ -1,3 +1,3 @@
 public enum CategoriaFarmacia {
-    BELEZA, BEM_ESTAR, BEBES, ANIMAIS;
+    BELEZA, BEM_ESTAR, BEBES, ANIMAIS, OUTROS;
 }
