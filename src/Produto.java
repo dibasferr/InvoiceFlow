@@ -17,4 +17,17 @@ public abstract class Produto {
 
     // Metodo abstrato para calcular o IVA de acordo com o tipo de Produto
     public abstract double calcularIVA(Localizacao localizacao);
+
+    public double valorProdutosSemIVA(){
+        return valorUnitario * quantidade;
+    }
+
+    public double valorProdutosComIVA(Localizacao localizacao){ 
+        return (valorUnitario + valorDoIVA(localizacao)) * quantidade;
+    }
+
+    public double valorDoIVA(Localizacao localizacao){
+        double taxaIVA = calcularIVA(localizacao);
+        return valorUnitario * taxaIVA;
+    }
 }

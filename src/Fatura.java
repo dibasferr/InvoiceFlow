@@ -23,6 +23,10 @@ public class Fatura {
         produtos.add(produto);
     }
 
+    public void setNumeroFatura(int novoNumeroFatura){this.numeroFatura= novoNumeroFatura;}
+
+    public void setData(String novaData){ this.data= novaData;}
+
     // Calula a quantidade de produtos na lista de produtos
     public int calcularNumProdutos(){
         int quantidade = 0;
@@ -36,7 +40,7 @@ public class Fatura {
     public double calcularValorSemIVA(){
         double total = 0;
         for(Produto produto : produtos){
-            total += produto.getValorUnitario();
+            total += produto.valorProdutosSemIVA();
         }
         return total;
     }
@@ -46,7 +50,7 @@ public class Fatura {
         double total = 0;
         Localizacao localizacao = cliente.getLocalizacao();
         for(Produto produto : produtos){
-            total += produto.calcularIVA(localizacao);
+            total += produto.valorProdutosComIVA(localizacao);
         }
         return total;
     }

@@ -23,6 +23,7 @@ public class Poofs {
             System.out.println("2. Listar clientes");
             System.out.println("3. Criar fatura");
             System.out.println("4. Listar faturas");
+            System.out.println("5. Editar clientes");
             System.out.println("0. Sair");
 
             int opcao = sc.nextInt();
@@ -33,6 +34,7 @@ public class Poofs {
                 case 2 -> empresa.listarClientes();
                 case 3 -> criarFatura();
                 case 4 -> empresa.listarFaturas();
+                case 5 -> editarClientes();
                 case 0 -> continuar = false;
                 default -> System.out.println("Opção inválida!");
             }
@@ -66,6 +68,50 @@ public class Poofs {
         empresa.addListaCliente(cliente);
         System.out.println("Cliente adicionado com sucesso a lista!");
     }
+    public void editarClientes(){
+        Scanner sc = new Scanner(System.in);
+        Cliente clienteEditar = null;
+        System.out.println("Digite o contribuinte do cliente");
+        int contribuite = sc.nextInt();
+        sc.nextLine();
+        Cliente cliente = empresa.procurarCliente(contribuite);
+        if(cliente == null){
+            System.out.println("Cliente nao encontrado!");
+            return;
+        }else{
+            clienteEditar = cliente;
+        }
+        System.out.println("Cliente encontrado " + clienteEditar.getNome());
+        System.out.println("Novo nome (coloque 1 pra manter): ");
+        String novoNome = sc.nextLine();
+        if(novoNome.equals("1")){
+            System.out.println(" Nome não alterado: "+ cliente.getNome());
+        }else{
+            cliente.setNome(novoNome);
+            System.out.println("Nome alterado");
+        }
+        System.out.println("Contribuinte atual: "+ clienteEditar.getContribuinte());
+        System.out.println("Novo contribuinte (coloque 1 para manter): ");
+        int novoContribuinte = sc.nextInt();
+        if(novoContribuinte == 1){
+            System.out.println("Contribuinte não alterado: "+ cliente.getContribuinte());
+        }else{
+            cliente.setContribuinte(novoContribuinte);
+        }
+        System.out.println("Localização atual: "+clienteEditar.getLocalizacao());
+        System.out.println("Editar localização do cliente: (1 - Portugal Continental, 2 - Madeira, 3 - Açores, 0 - Manter)");
+        Localizacao localizacao = null;
+        int escolha = sc.nextInt();
+        sc.nextLine();
+        switch (escolha){
+            case 1 -> localizacao = Localizacao.PORTUGAL_CONTINENTAL;
+            case 2 -> localizacao = Localizacao.MADEIRA;
+            case 3 -> localizacao = Localizacao.ACORES;
+            case 0 -> localizacao = cliente.getLocalizacao();
+            default -> System.out.println("Nao existe essa opçao!");
+        }
+        cliente.setLocalizacao(localizacao);
+    }
 
     public void criarFatura(){
         System.out.println("Digite o numero da fatura: ");
@@ -86,11 +132,16 @@ public class Poofs {
 
         Fatura fatura = new Fatura(numeroFatura, cliente, data);
 
-        System.out.println("Insira o(s) produto(s) da fatura: ");
         addProdutoLista(fatura);
 
         empresa.addListaFatura(fatura);
         System.out.println("Fatura adicionada com sucesso a lista!");
+    }
+
+    public void editarFatura(){
+        Scanner sc = new Scanner(System.in);
+        Fatura FaturaEditar = null;
+        System.out.println("O numero da fatura");
     }
 
     public void addProdutoLista(Fatura fatura){
@@ -130,8 +181,7 @@ public class Poofs {
         sc.nextLine();
 
         System.out.println("Qual o valor da unidade do produto? ");
-        double valorUnitario = sc.nextDouble();
-        sc.nextLine();
+        double valorUnitario = Double.parseDouble(sc.nextLine());
 
         System.out.println("O produto e biologico?  (SIM - digite '1')");
         int verificaBiologico = sc.nextInt();

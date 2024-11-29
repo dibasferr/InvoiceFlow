@@ -14,4 +14,10 @@ public class Cliente {
     public int getContribuinte(){ return contribuinte; }
 
     public Localizacao getLocalizacao(){ return localizacao; }
+
+    public void setNome(String novoNome){ this.nome=novoNome;}
+
+    public void setContribuinte(int contribuinte) { this.contribuinte = contribuinte;}
+
+    public void setLocalizacao(Localizacao localizacao){ this.localizacao = localizacao;}
 }
