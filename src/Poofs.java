@@ -24,6 +24,7 @@ public class Poofs {
             System.out.println("3. Criar fatura");
             System.out.println("4. Listar faturas");
             System.out.println("5. Editar clientes");
+            System.out.println("6. Visualizar Fatura");
             System.out.println("0. Sair");
 
             int opcao = sc.nextInt();
@@ -35,11 +36,27 @@ public class Poofs {
                 case 3 -> criarFatura();
                 case 4 -> empresa.listarFaturas();
                 case 5 -> editarClientes();
+                case 6 -> empresa.visualizarFaturas(procurarFatura());
                 case 0 -> continuar = false;
                 default -> System.out.println("Opção inválida!");
             }
         }
+
+        System.out.println("----- Estatisticas -----");
+        System.out.println("Numero de faturas: " + empresa.quantidadeFaturas());
+        System.out.println("Numero de produtos: " + empresa.quantidadeProdutos());
+        System.out.printf("Valor total sem IVA: %.2f \n", empresa.valorTotalSemIVA());
+        System.out.printf("Valor total do IVA: %.2f \n", empresa.valorTotalDoIVA());
+        System.out.printf("Valor total com IVA: %.2f \n", empresa.valorTotalComIVA());
+
         sc.close();
+    }
+
+    public Fatura procurarFatura(){
+        System.out.println("Qual o numero da fatura a visualizar? ");
+        int numeroFatura = sc.nextInt();
+        sc.nextLine();
+        return empresa.procurarFatura(numeroFatura);
     }
 
     public void criarCliente(){

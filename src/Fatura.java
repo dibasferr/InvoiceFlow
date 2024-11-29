@@ -30,7 +30,7 @@ public class Fatura {
     // Calula a quantidade de produtos na lista de produtos
     public int calcularNumProdutos(){
         int quantidade = 0;
-        for(Produto produto : produtos){
+        for(Produto _ : produtos){
             quantidade += 1;
         }
         return quantidade;
@@ -53,5 +53,20 @@ public class Fatura {
             total += produto.valorProdutosComIVA(localizacao);
         }
         return total;
+    }
+
+    public void listarProdutos(){
+        System.out.println("----- Lista de produtos -----");
+        Localizacao localizacao = cliente.getLocalizacao();
+        for(Produto produto : produtos){
+            produto.valoresProduto();
+            System.out.println("Percentagem do IVA: " + produto.calcularIVA(localizacao) + "%");
+            System.out.printf("Valor do IVA: %.2f \n", produto.valorDoIVA(localizacao));
+            System.out.printf("Preço com IVA do produto: %.2f \n", produto.valorProdutoComIVA(localizacao));
+        }
+        System.out.printf("Valor total dos produtos da fatura sem IVA: %.2f \n", calcularValorSemIVA());
+        double valorTotalIVA = calcularValorComIVA() - calcularValorSemIVA();
+        System.out.printf("Valor total do IVA: %.2f \n", valorTotalIVA);
+        System.out.printf("Valor total dos produtos da fatura com IVA: %.2f \n", calcularValorComIVA());
     }
 }
