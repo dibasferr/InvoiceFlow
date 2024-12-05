@@ -1,0 +1,14 @@
+Cliente Pedro 300991932 MADEIRA
+Cliente James 100100100 ACORES
+Cliente Chen 111155555 PORTUGAL_CONTINENTAL
+Fatura 1 300991932 04/12/2024
+Alimentar 1 Maça Vermelha 5 0.4 True NORMAL
+Farmacia 2 Paracetamol Ruim 1 3 True JamesDoctor
+Fatura 2 300991932 05/12/2024
+Alimentar 3 Bolacha Maizena 1 2.5 False REDUZIDA ISO22000 FSSC22000 HACCP GMP
+Alimentar 4 Feijao Carioca 4 0.6 True INTERMEDIARIA ENLATADOS
+Farmacia 5 Escova Cabelo 1 5 False BELEZA
+Fatura 3 111155555 05/12/2023
+Alimentar 6 Pao Italiano 2 1 True REDUZIDA ISO22000 GMP NULL NULL
+Fatura 4 100100100 06/12/2024
+Farmacia 7 Fralda Macia 20 10 False BEBES
