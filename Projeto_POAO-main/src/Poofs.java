@@ -17,7 +17,16 @@ public class Poofs {
     }
 
     public void executar() {
-        lerFicheiroTexto("ficheiro.txt");
+        File ficheiro = new File("ficheiro.obj");
+
+        if(ficheiro.exists() && ficheiro.isFile()){
+            System.out.println("Objeto");
+            empresa.carregaFicheiroObjeto(ficheiro);
+        }
+        else{
+            System.out.println("Texto");
+            lerFicheiroTexto("ficheiroEntrada.txt");
+        }
 
         boolean continuar = true;
         while (continuar) {
@@ -40,14 +49,23 @@ public class Poofs {
                 case 3 -> criarFatura();
                 case 4 -> empresa.listarFaturas();
                 case 5 -> editarClientes();
-                case 6 -> empresa.visualizarFaturas(procurarFatura());
+                case 6 -> empresa.visualizarFaturas(verificarFatura());
                 case 7 -> editarFatura();
                 case 0 -> continuar = false;
                 default -> System.out.println("Opção inválida!");
             }
         }
 
-        empresa.atualizaFicheiroObjetos("ficheiroObjeto");
+        try {
+            if (!ficheiro.exists()) {
+                ficheiro.createNewFile();  // Criar o arquivo se não existir
+                System.out.println("Arquivo criado: " + ficheiro.getName());
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao criar o arquivo: " + e.getMessage());
+        }
+
+        empresa.atualizaFicheiroObjetos(ficheiro);
 
         System.out.println("----- Estatisticas -----");
         System.out.println("Numero de faturas: " + empresa.quantidadeFaturas());
@@ -59,11 +77,17 @@ public class Poofs {
         sc.close();
     }
 
-    public Fatura procurarFatura(){
+    public Fatura verificarFatura(){
         System.out.println("Qual o numero da fatura a visualizar? ");
         int numeroFatura = sc.nextInt();
         sc.nextLine();
-        return empresa.procurarFatura(numeroFatura);
+        Fatura verificar = empresa.procuraFatura(numeroFatura);
+        if(verificar != null){
+            return empresa.procuraFatura(numeroFatura);
+        }else{
+            System.out.println("Fatura não existe");
+        }
+        return null;
     }
 
     public void criarCliente(){
@@ -203,14 +227,14 @@ public class Poofs {
         System.out.println("O numero da fatura");
         int numFatura = sc.nextInt();
         sc.nextLine();
-        Fatura fatura = empresa.procurarFatura(numFatura);
+        Fatura fatura = empresa.procuraFatura(numFatura);
         if(fatura == null){
             System.out.println("Fatura nao encontrada!");
             return;
         }else{
             faturaEditar = fatura;
         }
-        System.out.println("Fatura encontrada " + faturaEditar.getNumeroFatura());
+        System.out.println("Fatura encontrada: " + faturaEditar.getNumeroFatura());
         System.out.println("Novo numero (coloque 1 pra manter): ");
         int novoNumero = sc.nextInt();
         if(novoNumero==1){
@@ -234,12 +258,40 @@ public class Poofs {
         System.out.println("Data atual "+ faturaEditar.getData());
         System.out.println("Nova data (coloque 1 pra manter): ");
         String novaData = sc.nextLine();
+        sc.nextLine();
         if(novaData.equals("1")){
             System.out.println("Data não alterada: "+ fatura.getData());
         }else {
             fatura.setData(novaData);
         }
-
+        System.out.println("Nome do Cliente atual: "+faturaEditar.getCliente().getNome());
+        System.out.println("Novo Cliente (coloca o contribuinte do novo cliente, prime 1 pra manter)");
+        int novoCliente = sc.nextInt();
+        sc.nextLine();
+        if(novoCliente==1){
+            System.out.println("Cliente não alterado");
+        }else{
+            Cliente cliente = empresa.procurarCliente(novoCliente);
+            if(cliente == null){
+                System.out.println("Cliente não encontrado!");
+            }else{
+                fatura.setCliente(cliente);
+            }
+        }
+        System.out.println("Quantidade de produtos atual: "+faturaEditar.calcularNumProdutos());
+        System.out.println("1. Manter a quantidade");
+        System.out.println("2. Adicionar produto");
+        System.out.println("3. Eliminar produto");
+        int opcao= sc.nextInt();
+        switch (opcao){
+            case 1 -> System.out.println("Quantidade não alterada");
+            case 2 -> addProdutoLista(faturaEditar);
+            case 3 -> removeProdutoLista(faturaEditar);
+        }
+        while(faturaEditar.getProdutos().isEmpty()){
+            System.out.println("Erro, não pode deixar a fatura sem produtos");
+            addProdutoLista(faturaEditar);
+        }
     }
 
     public void addProdutoLista(Fatura fatura){
@@ -255,6 +307,32 @@ public class Poofs {
             }
 
             System.out.println("Deseja continuar a adicionar produtos na fatura? (SIM - digite '1')");
+            int conf = sc.nextInt();
+            sc.nextLine();
+            if(conf != 1){
+                continuar = false;
+            }
+        }
+    }
+
+    public void removeProdutoLista(Fatura fatura){
+        boolean continuar = true;
+        while(continuar){
+            ArrayList<Produto> produtos= fatura.getProdutos();
+            int index=0;
+            for(Produto produto: produtos){
+                System.out.println("Produto "+(index+1)+": "+produto.getNome());
+                index+=1;
+            }
+            System.out.println("Escolha o produto que quer eliminar");
+            int escolha= sc.nextInt();
+            sc.nextLine();
+            if(escolha<=index) {
+                fatura.getProdutos().remove(escolha - 1);
+            }else{
+                System.out.println("Escolha invalida");
+            }
+            System.out.println("Deseja eliminar mais um produto? (SIM - digite '1')  (NÃO - digite '0')");
             int conf = sc.nextInt();
             sc.nextLine();
             if(conf != 1){
@@ -408,79 +486,86 @@ public class Poofs {
                         Cliente cliente = new Cliente(nome, contribuinte, localizacao);
                         empresa.addListaCliente(cliente);
                     }
-                    else if(linha[0].equals("Fatura")){
-                        int numeroFatura = Integer.parseInt(linha[1]);
-                        int contribuinte = Integer.parseInt(linha[2]);
-                        Cliente cliente = empresa.procurarCliente(contribuinte);
-                        String data = linha[3];
-                        Fatura fatura = new Fatura(numeroFatura, cliente, data);
-                        empresa.addListaFatura(fatura);
-                        line = br.readLine();
-                        linha = line.split(" ");
-
-                        while(!linha[0].equals("Fatura")){
-                            String codigo = linha[1];
-                            String nome = linha[2];
-                            String descricao = linha[3];
-                            int quantidade = Integer.parseInt(linha[4]);
-                            double valorUnitario = Double.parseDouble(linha[5]);
-
-                            if(linha[0].equals("Alimentar")){
-                                boolean isBiologico = linha[6].equals("True");
-                                Taxa taxa = null;
-                                ArrayList<Certificacao> certificacoes = new ArrayList<>();
-                                CategoriaAlimentar categoria = null;
-                                switch (linha[7]){
-                                    case "NORMAL":
-                                        taxa = Taxa.NORMAL;
-                                        break;
-                                    case "INTERMEDIARIA":
-                                        taxa = Taxa.INTERMEDIARIA;
-                                        switch (linha[8]){
-                                            case "CONGELADOS" -> categoria = CategoriaAlimentar.CONGELADOS;
-                                            case "ENLATADOS" -> categoria = CategoriaAlimentar.ENLATADOS;
-                                            case "VINHOS" -> categoria = CategoriaAlimentar.VINHOS;
-                                            case "OUTROS" -> categoria = CategoriaAlimentar.OUTROS;
-                                            default -> System.out.println("Erro, nenhuma das opçoes estao presentes");
-                                        }
-                                        break;
-                                    case "REDUZIDA":
-                                        taxa = Taxa.REDUZIDA;
-                                        for(int i = 8; i < 12; i++){
-                                            if(!linha[i].equals("NULL")){
-                                                switch (linha[i]){
-                                                    case "ISO22000" -> certificacoes.add(Certificacao.ISO22000);
-                                                    case "FSSC22000" -> certificacoes.add(Certificacao.FSSC22000);
-                                                    case "HACCP" -> certificacoes.add(Certificacao.HACCP);
-                                                    case "GMP" -> certificacoes.add(Certificacao.GMP);
-                                                }
-                                            }
-                                        }
-                                }
-                                Produto produto = new ProdutoAlimentar(codigo, nome, descricao, quantidade, valorUnitario, isBiologico, taxa, certificacoes, categoria);
-                                fatura.addProduto(produto);
-                            }
-                            else{
-                                boolean hasPrescricao = linha[6].equals("True");
-                                String medicoPrescritor = "";
-                                CategoriaFarmacia categoria = null;
-                                if(hasPrescricao){
-                                    medicoPrescritor = linha[7];
-                                }
-                                else{
-                                    switch (linha[7]){
-                                        case "BELEZA" -> categoria = CategoriaFarmacia.BELEZA;
-                                        case "BEM_ESTAR" -> categoria = CategoriaFarmacia.BEM_ESTAR;
-                                        case "BEBES" -> categoria = CategoriaFarmacia.BEBES;
-                                        case "ANIMAIS" -> categoria = CategoriaFarmacia.ANIMAIS;
-                                        case "OUTROS" -> categoria = CategoriaFarmacia.OUTROS;
-                                    }
-                                }
-                                Produto produto = new ProdutoFarmacia(codigo, nome, descricao, quantidade, valorUnitario, hasPrescricao, medicoPrescritor, categoria);
-                                fatura.addProduto(produto);
-                            }
+                    else{
+                        while(line != null){
+                            int numeroFatura = Integer.parseInt(linha[1]);
+                            int contribuinte = Integer.parseInt(linha[2]);
+                            Cliente cliente = empresa.procurarCliente(contribuinte);
+                            String data = linha[3];
+                            Fatura fatura = new Fatura(numeroFatura, cliente, data);
+                            empresa.addListaFatura(fatura);
                             line = br.readLine();
                             linha = line.split(" ");
+
+                            while(!linha[0].equals("Fatura")){
+                                String codigo = linha[1];
+                                String nome = linha[2];
+                                String descricao = linha[3];
+                                int quantidade = Integer.parseInt(linha[4]);
+                                double valorUnitario = Double.parseDouble(linha[5]);
+
+                                if(linha[0].equals("Alimentar")){
+                                    boolean isBiologico = linha[6].equals("True");
+                                    Taxa taxa = null;
+                                    ArrayList<Certificacao> certificacoes = new ArrayList<>();
+                                    CategoriaAlimentar categoria = null;
+                                    switch (linha[7]){
+                                        case "NORMAL":
+                                            taxa = Taxa.NORMAL;
+                                            break;
+                                        case "INTERMEDIARIA":
+                                            taxa = Taxa.INTERMEDIARIA;
+                                            switch (linha[8]){
+                                                case "CONGELADOS" -> categoria = CategoriaAlimentar.CONGELADOS;
+                                                case "ENLATADOS" -> categoria = CategoriaAlimentar.ENLATADOS;
+                                                case "VINHOS" -> categoria = CategoriaAlimentar.VINHOS;
+                                                case "OUTROS" -> categoria = CategoriaAlimentar.OUTROS;
+                                                default -> System.out.println("Erro, nenhuma das opçoes estao presentes");
+                                            }
+                                            break;
+                                        case "REDUZIDA":
+                                            taxa = Taxa.REDUZIDA;
+                                            for(int i = 8; i < 12; i++){
+                                                if(!linha[i].equals("NULL")){
+                                                    switch (linha[i]){
+                                                        case "ISO22000" -> certificacoes.add(Certificacao.ISO22000);
+                                                        case "FSSC22000" -> certificacoes.add(Certificacao.FSSC22000);
+                                                        case "HACCP" -> certificacoes.add(Certificacao.HACCP);
+                                                        case "GMP" -> certificacoes.add(Certificacao.GMP);
+                                                    }
+                                                }
+                                            }
+                                    }
+                                    Produto produto = new ProdutoAlimentar(codigo, nome, descricao, quantidade, valorUnitario, isBiologico, taxa, certificacoes, categoria);
+                                    fatura.addProduto(produto);
+                                }
+                                else{
+                                    boolean hasPrescricao = linha[6].equals("True");
+                                    String medicoPrescritor = "";
+                                    CategoriaFarmacia categoria = null;
+                                    if(hasPrescricao){
+                                        medicoPrescritor = linha[7];
+                                    }
+                                    else{
+                                        switch (linha[7]){
+                                            case "BELEZA" -> categoria = CategoriaFarmacia.BELEZA;
+                                            case "BEM_ESTAR" -> categoria = CategoriaFarmacia.BEM_ESTAR;
+                                            case "BEBES" -> categoria = CategoriaFarmacia.BEBES;
+                                            case "ANIMAIS" -> categoria = CategoriaFarmacia.ANIMAIS;
+                                            case "OUTROS" -> categoria = CategoriaFarmacia.OUTROS;
+                                        }
+                                    }
+                                    Produto produto = new ProdutoFarmacia(codigo, nome, descricao, quantidade, valorUnitario, hasPrescricao, medicoPrescritor, categoria);
+                                    fatura.addProduto(produto);
+                                }
+                                line = br.readLine();
+                                if(line != null){
+                                    linha = line.split(" ");
+                                }
+                                else {
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

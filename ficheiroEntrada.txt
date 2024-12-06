@@ -4,8 +4,8 @@ Cliente Chen 111155555 PORTUGAL_CONTINENTAL
 Fatura 1 300991932 04/12/2024
 Alimentar 1 Maça Vermelha 5 0.4 True NORMAL
 Farmacia 2 Paracetamol Ruim 1 3 True JamesDoctor
-Fatura 2 300991932 05/12/2024
 Alimentar 3 Bolacha Maizena 1 2.5 False REDUZIDA ISO22000 FSSC22000 HACCP GMP
+Fatura 2 300991932 05/12/2024
 Alimentar 4 Feijao Carioca 4 0.6 True INTERMEDIARIA ENLATADOS
 Farmacia 5 Escova Cabelo 1 5 False BELEZA
 Fatura 3 111155555 05/12/2023

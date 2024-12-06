@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Fatura {
+public class Fatura implements Serializable {
     private int numeroFatura;
     private Cliente cliente;
     private String data;
@@ -19,6 +20,8 @@ public class Fatura {
 
     public String getData(){ return data; }
 
+    public ArrayList<Produto> getProdutos(){return produtos;}
+
     public void addProduto(Produto produto){
         produtos.add(produto);
     }
@@ -26,6 +29,8 @@ public class Fatura {
     public void setNumeroFatura(int novoNumeroFatura){this.numeroFatura= novoNumeroFatura;}
 
     public void setData(String novaData){ this.data= novaData;}
+
+    public void setCliente(Cliente cliente){this.cliente= cliente;}
 
     // Calula a quantidade de produtos na lista de produtos
     public int calcularNumProdutos(){

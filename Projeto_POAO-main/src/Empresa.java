@@ -32,13 +32,15 @@ public class Empresa {
     }
 
     // Procura uma fatura na lista pelo numero da fatura
-    public Fatura procurarFatura(int numeroFatura){
-        for(Fatura fatura : faturas){
-            if(fatura.getNumeroFatura() == numeroFatura){
+    public Fatura procuraFatura(int numeroFatura){
+        for (Fatura fatura : faturas) {
+            if (fatura.getNumeroFatura() == numeroFatura) {
                 return fatura;
+            } else {
+                System.out.println("Fatura nao encontrada na lista!");
+                return null;
             }
         }
-        System.out.println("Fatura nao encontrada na lista!");
         return null;
     }
     public int verificaContribuinte(int contribuinte){
@@ -100,11 +102,7 @@ public class Empresa {
     }
 
     public int quantidadeFaturas(){
-        int quantidade = 0;
-        for(Fatura _ : faturas){
-            quantidade += 1;
-        }
-        return quantidade;
+        return faturas.size();
     }
 
     public int quantidadeProdutos(){
@@ -135,19 +133,38 @@ public class Empresa {
         return valorTotalComIVA() - valorTotalSemIVA();
     }
 
-    public void atualizaFicheiroObjetos(String nomeFicheiro){
-        for(Fatura fatura : faturas){
-            try {
-                FileOutputStream fos = new FileOutputStream(nomeFicheiro);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(fatura);
-                oos.close();
-            } catch (FileNotFoundException ex) {
-                System.out.println("Erro a criar ficheiro.");
-            } catch (IOException ex) {
-                System.out.println("Erro a escrever para o ficheiro.");
-            }
+    public void atualizaFicheiroObjetos(File ficheiro){
+        try {
+            FileOutputStream fos = new FileOutputStream(ficheiro);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
 
+            oos.writeObject(clientes);
+            oos.writeObject(faturas);
+
+            oos.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Erro a criar ficheiro.");
+        } catch (IOException ex) {
+            System.out.println("Erro a escrever para o ficheiro.");
         }
     }
+
+    public void carregaFicheiroObjeto(File ficheiro) {
+        try {
+            FileInputStream fis = new FileInputStream(ficheiro);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            clientes = (ArrayList<Cliente>) ois.readObject();
+            faturas = (ArrayList<Fatura>) ois.readObject();
+
+            ois.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Erro a abrir ficheiro.");
+        } catch (IOException ex) {
+            System.out.println("Erro a ler ficheiro.");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Erro a converter objeto.");
+        }
+    }
+
 }
