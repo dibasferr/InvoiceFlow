@@ -1,3 +1,6 @@
+package aplicacao;
+
+import enums.Localizacao;
 import java.io.Serializable;
 
 public abstract class Produto implements Serializable {
@@ -7,7 +10,7 @@ public abstract class Produto implements Serializable {
     private int quantidade;
     private double valorUnitario;
 
-    public Produto(String codigo, String nome, String descricao, int quantidade, double valorUnitario){
+    Produto(String codigo, String nome, String descricao, int quantidade, double valorUnitario){
         this.codigo = codigo;
         this.nome = nome;
         this.descricao = descricao;
@@ -15,33 +18,27 @@ public abstract class Produto implements Serializable {
         this.valorUnitario = valorUnitario;
     }
 
-    public String getCodigo(){ return codigo;}
-    public String getNome(){ return nome;}
-    public String getDescricao(){ return descricao;}
-    public int getQuantidade(){ return quantidade;}
-    public double getValorUnitario(){ return valorUnitario;}
+    String getNome(){ return nome;}
 
     // Metodo abstrato para calcular o IVA de acordo com o tipo de Produto
-    public abstract double calcularIVA(Localizacao localizacao);
+    abstract double calcularIVA(Localizacao localizacao);
 
-    public double valorProdutosSemIVA(){
+    double valorProdutosSemIVA(){
         return valorUnitario * quantidade;
     }
 
-    public double valorProdutosComIVA(Localizacao localizacao){
-        return valorProdutoComIVA(localizacao) * quantidade;
+    double valorProdutosComIVA(Localizacao localizacao){ return valorProdutoComIVA(localizacao) * quantidade;
     }
 
-    public double valorProdutoComIVA(Localizacao localizacao){
-        return valorUnitario + valorDoIVA(localizacao);
+    double valorProdutoComIVA(Localizacao localizacao){ return valorUnitario + valorDoIVA(localizacao);
     }
 
-    public double valorDoIVA(Localizacao localizacao){
+    double valorDoIVA(Localizacao localizacao){
         double taxaIVA = calcularIVA(localizacao);
         return valorUnitario * (taxaIVA / 100);
     }
 
-    public void valoresProduto(){
+    void valoresProduto(){
         System.out.println("Codigo do produto: " + codigo);
         System.out.println("Nome do produto: " + nome);
         System.out.println("Descricao do produto: " + descricao);

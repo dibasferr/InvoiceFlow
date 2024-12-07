@@ -1,3 +1,8 @@
+package aplicacao;
+
+import enums.CategoriaFarmacia;
+import enums.Localizacao;
+
 import java.io.Serializable;
 
 public class ProdutoFarmacia extends Produto implements Serializable {
@@ -5,7 +10,7 @@ public class ProdutoFarmacia extends Produto implements Serializable {
     private String medicoPrescritor;
     private CategoriaFarmacia categoria;
 
-    public ProdutoFarmacia(String codigo, String nome, String descricao, int quantidade, double valorUnitario,
+    ProdutoFarmacia(String codigo, String nome, String descricao, int quantidade, double valorUnitario,
                            boolean hasPrescricao, String medicoPrescritor, CategoriaFarmacia categoria) {
         super(codigo, nome, descricao, quantidade, valorUnitario);
         this.hasPrescricao = hasPrescricao;
@@ -14,7 +19,7 @@ public class ProdutoFarmacia extends Produto implements Serializable {
     }
 
     @Override
-    public double calcularIVA(Localizacao localizacao) {
+    double calcularIVA(Localizacao localizacao) {
         int ivaBase = getTaxaBaseFarmacia(localizacao);
 
         // Se a categoria for "animais", aplica-se uma redução de 1%

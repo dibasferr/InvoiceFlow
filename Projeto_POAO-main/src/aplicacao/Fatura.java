@@ -1,3 +1,6 @@
+package aplicacao;
+
+import enums.Localizacao;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -7,33 +10,33 @@ public class Fatura implements Serializable {
     private String data;
     private ArrayList<Produto> produtos;
 
-    public Fatura(int numeroFatura, Cliente cliente, String data){
+    Fatura(int numeroFatura, Cliente cliente, String data){
         this.numeroFatura = numeroFatura;
         this.cliente = cliente;
         this.data = data;
         this.produtos = new ArrayList<>();
     }
 
-    public int getNumeroFatura(){ return numeroFatura; }
+    int getNumeroFatura(){ return numeroFatura; }
 
-    public Cliente getCliente(){ return cliente; }
+    Cliente getCliente(){ return cliente; }
 
-    public String getData(){ return data; }
+    String getData(){ return data; }
 
-    public ArrayList<Produto> getProdutos(){return produtos;}
+    ArrayList<Produto> getProdutos(){return produtos;}
 
-    public void addProduto(Produto produto){
+    void addProduto(Produto produto){
         produtos.add(produto);
     }
 
-    public void setNumeroFatura(int novoNumeroFatura){this.numeroFatura= novoNumeroFatura;}
+    void setNumeroFatura(int novoNumeroFatura){this.numeroFatura= novoNumeroFatura;}
 
-    public void setData(String novaData){ this.data= novaData;}
+    void setData(String novaData){ this.data= novaData;}
 
-    public void setCliente(Cliente cliente){this.cliente= cliente;}
+    void setCliente(Cliente cliente){this.cliente= cliente;}
 
     // Calula a quantidade de produtos na lista de produtos
-    public int calcularNumProdutos(){
+    int calcularNumProdutos(){
         int quantidade = 0;
         for(Produto _ : produtos){
             quantidade += 1;
@@ -42,7 +45,7 @@ public class Fatura implements Serializable {
     }
 
     // Calcula o valor total da lista sem taxa de imposto (IVA)
-    public double calcularValorSemIVA(){
+    double calcularValorSemIVA(){
         double total = 0;
         for(Produto produto : produtos){
             total += produto.valorProdutosSemIVA();
@@ -51,7 +54,7 @@ public class Fatura implements Serializable {
     }
 
     // Calcula o valor total da lista com taxa de imposto (IVA)
-    public double calcularValorComIVA(){
+    double calcularValorComIVA(){
         double total = 0;
         Localizacao localizacao = cliente.getLocalizacao();
         for(Produto produto : produtos){
@@ -60,7 +63,7 @@ public class Fatura implements Serializable {
         return total;
     }
 
-    public void listarProdutos(){
+    void listarProdutos(){
         System.out.println("----- Lista de produtos -----");
         Localizacao localizacao = cliente.getLocalizacao();
         for(Produto produto : produtos){

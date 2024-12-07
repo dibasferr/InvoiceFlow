@@ -1,3 +1,6 @@
+package aplicacao;
+
+import enums.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -6,7 +9,7 @@ public class Poofs {
     private Empresa empresa;
     private Scanner sc;
 
-    public Poofs() {
+    private Poofs() {
         empresa = new Empresa();
         sc = new Scanner(System.in);
     }
@@ -16,7 +19,7 @@ public class Poofs {
         app.executar();
     }
 
-    public void executar() {
+    private void executar() {
         File ficheiro = new File("ficheiro.obj");
 
         if(ficheiro.exists() && ficheiro.isFile()){
@@ -77,20 +80,14 @@ public class Poofs {
         sc.close();
     }
 
-    public Fatura verificarFatura(){
+    Fatura verificarFatura(){
         System.out.println("Qual o numero da fatura a visualizar? ");
         int numeroFatura = sc.nextInt();
         sc.nextLine();
-        Fatura verificar = empresa.procuraFatura(numeroFatura);
-        if(verificar != null){
-            return empresa.procuraFatura(numeroFatura);
-        }else{
-            System.out.println("Fatura não existe");
-        }
-        return null;
+        return empresa.procuraFatura(numeroFatura);
     }
 
-    public void criarCliente(){
+    private void criarCliente(){
         System.out.println("Nome do novo cliente: ");
         String nome = sc.nextLine();
 
@@ -127,8 +124,7 @@ public class Poofs {
         empresa.addListaCliente(cliente);
         System.out.println("Cliente adicionado com sucesso a lista!");
     }
-    public void editarClientes(){
-        Scanner sc = new Scanner(System.in);
+    private void editarClientes(){
         Cliente clienteEditar = null;
         System.out.println("Digite o contribuinte do cliente");
         int contribuite = sc.nextInt();
@@ -184,7 +180,7 @@ public class Poofs {
         cliente.setLocalizacao(localizacao);
     }
 
-    public void criarFatura(){
+    private void criarFatura(){
         System.out.println("Digite o numero da fatura: ");
         int numeroFatura = sc.nextInt();
         sc.nextLine();
@@ -221,8 +217,7 @@ public class Poofs {
         System.out.println("Fatura adicionada com sucesso a lista!");
     }
 
-    public void editarFatura(){
-        Scanner sc = new Scanner(System.in);
+    private void editarFatura(){
         Fatura faturaEditar = null;
         System.out.println("O numero da fatura");
         int numFatura = sc.nextInt();
@@ -294,7 +289,7 @@ public class Poofs {
         }
     }
 
-    public void addProdutoLista(Fatura fatura){
+    private void addProdutoLista(Fatura fatura){
         boolean continuar = true;
         while (continuar){
             System.out.println("Qual o tipo de produto que gostaria de adicionar a fatura?  (1 - Alimentar, 2 - Farmacia)");
@@ -315,7 +310,7 @@ public class Poofs {
         }
     }
 
-    public void removeProdutoLista(Fatura fatura){
+    private void removeProdutoLista(Fatura fatura){
         boolean continuar = true;
         while(continuar){
             ArrayList<Produto> produtos= fatura.getProdutos();
@@ -342,7 +337,7 @@ public class Poofs {
     }
 
     // Funcao para a atribuiçao de dados dos atributos da classe ProdutoAlimentar
-    public ProdutoAlimentar criarProdutoAlimentar(){
+    private ProdutoAlimentar criarProdutoAlimentar(){
         System.out.println("Qual o codigo do produto? ");
         String codigo = sc.nextLine();
 
@@ -405,7 +400,7 @@ public class Poofs {
         return new ProdutoAlimentar(codigo, nome, descricao, quantidade, valorUnitario, isBiologico, taxa, certificacoes, categoria);
     }
 
-    public void formatoCertificacao(Certificacao certificacao, ArrayList<Certificacao> certificacoes){
+    private void formatoCertificacao(Certificacao certificacao, ArrayList<Certificacao> certificacoes){
         System.out.println("O produto vai ter a certificacao %s?  (SIM - digite '1')" + certificacao);
         int verificaCertificacao = sc.nextInt();
         sc.nextLine();
@@ -415,7 +410,7 @@ public class Poofs {
     }
 
     // Funcao para a atribuiçao de dados dos atributos da classe ProdutoFarmacia
-    public ProdutoFarmacia criarProdutoFarmacia(){
+    private ProdutoFarmacia criarProdutoFarmacia(){
         System.out.println("Qual o codigo do produto? ");
         String codigo = sc.nextLine();
 
@@ -463,7 +458,7 @@ public class Poofs {
         return new ProdutoFarmacia(codigo, nome, descricao, quantidade, valorUnitario, hasPrescricao, medicoPrescritor, categoria);
     }
 
-    public void lerFicheiroTexto(String nomeFicheiro){
+    private void lerFicheiroTexto(String nomeFicheiro){
         File f = new File(nomeFicheiro);
         if (f.exists() && f.isFile()) {
             try {
@@ -579,8 +574,5 @@ public class Poofs {
         } else {
             System.out.println("Ficheiro não existe.");
         }
-    }
-
-    public void lerFicheiroObjeto(){
     }
 }

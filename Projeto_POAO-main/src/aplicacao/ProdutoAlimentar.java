@@ -1,3 +1,10 @@
+package aplicacao;
+
+import enums.CategoriaAlimentar;
+import enums.Certificacao;
+import enums.Localizacao;
+import enums.Taxa;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -7,7 +14,7 @@ public class ProdutoAlimentar extends Produto implements Serializable {
     private ArrayList<Certificacao> certificacoes;
     private CategoriaAlimentar categoria;
 
-    public ProdutoAlimentar(String codigo, String nome, String descricao, int quantidade, double valorUnitario,
+    ProdutoAlimentar(String codigo, String nome, String descricao, int quantidade, double valorUnitario,
                             boolean isBiologico, Taxa taxa, ArrayList<Certificacao> certificacoes, CategoriaAlimentar categoria){
         super(codigo, nome, descricao, quantidade, valorUnitario);
         this.isBiologico = isBiologico;
@@ -17,7 +24,7 @@ public class ProdutoAlimentar extends Produto implements Serializable {
     }
 
     @Override
-    public double calcularIVA(Localizacao localizacao){
+    double calcularIVA(Localizacao localizacao){
             int ivaBase = 0;
             if(localizacao.equals(Localizacao.PORTUGAL_CONTINENTAL)){
                 ivaBase = getTaxaBaseContinente();
@@ -47,7 +54,7 @@ public class ProdutoAlimentar extends Produto implements Serializable {
             return ivaBase;
     }
 
-    public int getTaxaBaseContinente(){
+    private int getTaxaBaseContinente(){
         switch (taxa){
             case REDUZIDA:
                 return 6;
@@ -60,7 +67,7 @@ public class ProdutoAlimentar extends Produto implements Serializable {
         }
     }
 
-    public int getTaxaBaseMadeira(){
+    private int getTaxaBaseMadeira(){
         switch (taxa){
             case REDUZIDA:
                 return 5;
@@ -73,7 +80,7 @@ public class ProdutoAlimentar extends Produto implements Serializable {
         }
     }
 
-    public int getTaxaBaseAcores(){
+    private int getTaxaBaseAcores(){
         switch (taxa){
             case REDUZIDA:
                 return 4;

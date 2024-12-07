@@ -1,3 +1,5 @@
+package aplicacao;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -5,23 +7,23 @@ public class Empresa {
     private ArrayList<Fatura> faturas;
     private ArrayList<Cliente> clientes;
 
-    public Empresa(){
+    Empresa(){
         faturas = new ArrayList<>();
         clientes = new ArrayList<>();
     }
 
     // Adiciona um cliente na lista de clientes
-    public void addListaCliente(Cliente cliente){
+    void addListaCliente(Cliente cliente){
         clientes.add(cliente);
     }
 
     // Adiciona uma fatura na lista de faturas
-    public void addListaFatura(Fatura fatura){
+    void addListaFatura(Fatura fatura){
         faturas.add(fatura);
     }
 
     // Procura um cliente na lista pelo numero de contribuinte
-    public Cliente procurarCliente(int contribuinte){
+    Cliente procurarCliente(int contribuinte){
         for(Cliente cliente : clientes){
             if(cliente.getContribuinte() == contribuinte){
                 return cliente;
@@ -32,18 +34,15 @@ public class Empresa {
     }
 
     // Procura uma fatura na lista pelo numero da fatura
-    public Fatura procuraFatura(int numeroFatura){
+    Fatura procuraFatura(int numeroFatura){
         for (Fatura fatura : faturas) {
             if (fatura.getNumeroFatura() == numeroFatura) {
                 return fatura;
-            } else {
-                System.out.println("Fatura nao encontrada na lista!");
-                return null;
             }
         }
         return null;
     }
-    public int verificaContribuinte(int contribuinte){
+    int verificaContribuinte(int contribuinte){
         for(Cliente cliente : clientes){
             if(cliente.getContribuinte() == contribuinte){
                 System.out.println("Contribuinte já existente");
@@ -53,7 +52,7 @@ public class Empresa {
         return 0;
     }
 
-    public int verificaNumeroFatura(int numeroFatura){
+    int verificaNumeroFatura(int numeroFatura){
         for(Fatura fatura : faturas){
             if(fatura.getNumeroFatura() == numeroFatura){
                 System.out.println("Numero de fatura já existente");
@@ -64,7 +63,7 @@ public class Empresa {
     }
 
     // Lista as todas as informaçoes dos clientes da lista de clientes
-    public void listarClientes(){
+    void listarClientes(){
         System.out.println("----- Lista de clientes -----");
         for(Cliente cliente : clientes){
             System.out.println("nome: " + cliente.getNome());
@@ -75,7 +74,7 @@ public class Empresa {
     }
 
     // Lista as informacoes das faturas da lista de faturas
-    public void listarFaturas(){
+    void listarFaturas(){
         System.out.println("----- Lista de faturas -----");
         for(Fatura fatura : faturas){
             System.out.println("numero da fatura: " + fatura.getNumeroFatura());
@@ -90,22 +89,27 @@ public class Empresa {
     }
 
     // Visualizar as informacoes de uma determinada fatura
-    public void visualizarFaturas(Fatura fatura){
-        System.out.println("----- Visualizacao da fatura -----");
-        System.out.println("numero da fatura: " + fatura.getNumeroFatura());
-        System.out.println("nome do cliente: " + fatura.getCliente().getNome());
-        System.out.println("contribuinte: " + fatura.getCliente().getContribuinte());
-        System.out.println("localizacao: " + fatura.getCliente().getLocalizacao());
-        fatura.listarProdutos();
-        System.out.printf("valor total sem IVA: %.2f \n", fatura.calcularValorSemIVA());
-        System.out.printf("valor total com IVA: %.2f \n", fatura.calcularValorComIVA());
+    void visualizarFaturas(Fatura fatura){
+        if(fatura != null){
+            System.out.println("----- Visualizacao da fatura -----");
+            System.out.println("numero da fatura: " + fatura.getNumeroFatura());
+            System.out.println("nome do cliente: " + fatura.getCliente().getNome());
+            System.out.println("contribuinte: " + fatura.getCliente().getContribuinte());
+            System.out.println("localizacao: " + fatura.getCliente().getLocalizacao());
+            fatura.listarProdutos();
+            System.out.printf("valor total sem IVA: %.2f \n", fatura.calcularValorSemIVA());
+            System.out.printf("valor total com IVA: %.2f \n", fatura.calcularValorComIVA());
+        }
+        else{
+            System.out.println("Fatura nao encontrada na lista!");
+        }
     }
 
-    public int quantidadeFaturas(){
+    int quantidadeFaturas(){
         return faturas.size();
     }
 
-    public int quantidadeProdutos(){
+    int quantidadeProdutos(){
         int quantidade = 0;
         for(Fatura fatura : faturas){
             quantidade += fatura.calcularNumProdutos();
@@ -113,7 +117,7 @@ public class Empresa {
         return quantidade;
     }
 
-    public double valorTotalSemIVA(){
+    double valorTotalSemIVA(){
         double valor = 0;
         for(Fatura fatura : faturas){
             valor += fatura.calcularValorSemIVA();
@@ -121,7 +125,7 @@ public class Empresa {
         return valor;
     }
 
-    public double valorTotalComIVA(){
+    double valorTotalComIVA(){
         double valor = 0;
         for(Fatura fatura : faturas){
             valor += fatura.calcularValorComIVA();
@@ -129,11 +133,11 @@ public class Empresa {
         return valor;
     }
 
-    public double valorTotalDoIVA(){
+    double valorTotalDoIVA(){
         return valorTotalComIVA() - valorTotalSemIVA();
     }
 
-    public void atualizaFicheiroObjetos(File ficheiro){
+    void atualizaFicheiroObjetos(File ficheiro){
         try {
             FileOutputStream fos = new FileOutputStream(ficheiro);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -149,7 +153,7 @@ public class Empresa {
         }
     }
 
-    public void carregaFicheiroObjeto(File ficheiro) {
+    void carregaFicheiroObjeto(File ficheiro) {
         try {
             FileInputStream fis = new FileInputStream(ficheiro);
             ObjectInputStream ois = new ObjectInputStream(fis);
