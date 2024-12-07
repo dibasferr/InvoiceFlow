@@ -43,8 +43,8 @@ public class Poofs {
             System.out.println("3. Criar fatura");
             System.out.println("4. Listar faturas");
             System.out.println("5. Editar clientes");
-            System.out.println("6. Visualizar Fatura");
-            System.out.println("7. Editar Fatura");
+            System.out.println("6. Editar Fatura");
+            System.out.println("7. Visualizar Fatura");
             System.out.println("8 Importar faturas");
             System.out.println("9. Exportar faturas");
             System.out.println("0. Sair");
@@ -58,8 +58,8 @@ public class Poofs {
                 case 3 -> criarFatura();
                 case 4 -> empresa.listarFaturas();
                 case 5 -> editarClientes();
-                case 6 -> empresa.visualizarFaturas(verificarFatura());
-                case 7 -> editarFatura();
+                case 6 -> editarFatura();
+                case 7 -> empresa.visualizarFaturas(verificarFatura());
                 case 8 -> empresa.importarFaturas(importa);
                 case 9 -> empresa.exportarFaturas(exporta, verificarFatura());
                 case 0 -> continuar = false;
@@ -224,8 +224,10 @@ public class Poofs {
 
         addProdutoLista(fatura);
 
-        empresa.addListaFatura(fatura);
-        System.out.println("Fatura adicionada com sucesso a lista!");
+        if(!fatura.getProdutos().isEmpty()){
+            empresa.addListaFatura(fatura);
+            System.out.println("Fatura adicionada com sucesso a lista!");
+        }
     }
 
     private void editarFatura(){
@@ -381,7 +383,7 @@ public class Poofs {
             case 1 -> taxa = Taxa.REDUZIDA;
             case 2 -> taxa = Taxa.INTERMEDIARIA;
             case 3 -> taxa = Taxa.NORMAL;
-            default -> System.out.println("Opçao invalida!");
+            default -> System.out.println("Inicializado como taxa normal");
         }
         if(taxa == null){
             taxa = Taxa.NORMAL;
@@ -412,7 +414,7 @@ public class Poofs {
     }
 
     private void formatoCertificacao(Certificacao certificacao, ArrayList<Certificacao> certificacoes){
-        System.out.println("O produto vai ter a certificacao %s?  (SIM - digite '1')" + certificacao);
+        System.out.printf("O produto vai ter a certificacao %s?  (SIM - digite '1')\n",certificacao);
         int verificaCertificacao = sc.nextInt();
         sc.nextLine();
         if(verificaCertificacao == 1){
