@@ -1,5 +1,10 @@
 package aplicacao;
 
+import enums.CategoriaAlimentar;
+import enums.CategoriaFarmacia;
+import enums.Certificacao;
+import enums.Taxa;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -29,7 +34,7 @@ public class Empresa {
                 return cliente;
             }
         }
-        System.out.println("Cliente nao encontrado na lista!");
+        System.out.printf("O cliente com contribuinte (%d) nao se encontra na lista!\n", contribuinte);
         return null;
     }
 
@@ -55,7 +60,7 @@ public class Empresa {
     int verificaNumeroFatura(int numeroFatura){
         for(Fatura fatura : faturas){
             if(fatura.getNumeroFatura() == numeroFatura){
-                System.out.println("Numero de fatura já existente");
+                System.out.printf("A fatura nº %d ja existe na lista\n", numeroFatura);
                 return 1;
             }
         }
@@ -171,4 +176,153 @@ public class Empresa {
         }
     }
 
+    void importarFaturas(File ficheiro){
+        if(ficheiro != null){
+            try {
+                FileReader fr = new FileReader(ficheiro);
+                BufferedReader br = new BufferedReader(fr);
+                String line;
+                String[] linha;
+                while((line = br.readLine()) != null){
+                    linha = line.split(" ");
+                    if(linha[0].equals("Fatura")){
+                        int numeroFatura = Integer.parseInt(linha[1]);
+                        // Executa caso a fatura ainda nao exista na lista
+                        if(verificaNumeroFatura(numeroFatura) == 0){
+                            int contribuinte = Integer.parseInt(linha[2]);
+                            Cliente cliente = procurarCliente(contribuinte);
+                            if(cliente == null)
+                                continue;
+                            String data = linha[3];
+                            Fatura fatura = new Fatura(numeroFatura, cliente, data);
+                            addListaFatura(fatura);
+                            System.out.println("Nova fatura adicionada!");
+                            line = br.readLine();
+                            linha = line.split(" ");
+
+                            while(!linha[0].equals("Fatura")){
+                                lerProdutosFicheiro(linha, fatura);
+                                line = br.readLine();
+                                if(line != null){
+                                    linha = line.split(" ");
+                                }
+                                else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                br.close();
+            } catch (FileNotFoundException ex) {
+                System.out.println("Erro a abrir ficheiro de texto.");
+            } catch (IOException ex) {
+                System.out.println("Erro a ler ficheiro de texto.");
+            }
+
+        }
+        else{
+            System.out.println("Nenhuma fatura para importar!");
+        }
+    }
+
+    void exportarFaturas(File ficheiro, Fatura fatura){
+        if(fatura != null){
+            try {
+                FileWriter fw = new FileWriter(ficheiro, true);
+                BufferedWriter bw = new BufferedWriter(fw);
+
+                bw.write("---------- Fatura Nº " + fatura.getNumeroFatura() + "----------");
+                bw.newLine();
+                bw.write("Cliente: " + fatura.getCliente().getNome() + "    Contribuinte: " + fatura.getCliente().getContribuinte() + "    Localizaçao: " + fatura.getCliente().getLocalizacao());
+                bw.newLine();
+                bw.write("Data " + fatura.getData());
+                bw.newLine();
+                bw.newLine();
+                bw.write("Produtos:");
+                bw.newLine();
+                for(Produto produto : fatura.getProdutos()){
+                    bw.write("Codigo: " + produto.getCodigo() + "    Nome: " + produto.getNome());
+                    bw.newLine();
+                    bw.write("Descriçao: " + produto.getDescricao());
+                    bw.newLine();
+                    bw.write("Quantidade: " + produto.getQuantidade() + "    Preço da unidade: " + produto.getValorUnitario());
+                    bw.newLine();
+                }
+                bw.write("-----------------------------------");
+                bw.newLine();
+                bw.newLine();
+                bw.close();
+                System.out.println("Exportado com sucesso!");
+            } catch (IOException ex) {
+                System.out.println("Erro a escrever no ficheiro.");
+            }
+        }
+        else{
+            System.out.println("Fatura nao encontrada na lista!");
+        }
+    }
+
+    void lerProdutosFicheiro(String[] linha, Fatura fatura){
+        String codigo = linha[1];
+        String nome = linha[2];
+        String descricao = linha[3];
+        int quantidade = Integer.parseInt(linha[4]);
+        double valorUnitario = Double.parseDouble(linha[5]);
+
+        if(linha[0].equals("Alimentar")){
+            boolean isBiologico = linha[6].equals("True");
+            Taxa taxa = null;
+            ArrayList<Certificacao> certificacoes = new ArrayList<>();
+            CategoriaAlimentar categoria = null;
+            switch (linha[7]){
+                case "NORMAL":
+                    taxa = Taxa.NORMAL;
+                    break;
+                case "INTERMEDIARIA":
+                    taxa = Taxa.INTERMEDIARIA;
+                    switch (linha[8]){
+                        case "CONGELADOS" -> categoria = CategoriaAlimentar.CONGELADOS;
+                        case "ENLATADOS" -> categoria = CategoriaAlimentar.ENLATADOS;
+                        case "VINHOS" -> categoria = CategoriaAlimentar.VINHOS;
+                        case "OUTROS" -> categoria = CategoriaAlimentar.OUTROS;
+                        default -> System.out.println("Erro, nenhuma das opçoes estao presentes");
+                    }
+                    break;
+                case "REDUZIDA":
+                    taxa = Taxa.REDUZIDA;
+                    for(int i = 8; i < 12; i++){
+                        if(!linha[i].equals("NULL")){
+                            switch (linha[i]){
+                                case "ISO22000" -> certificacoes.add(Certificacao.ISO22000);
+                                case "FSSC22000" -> certificacoes.add(Certificacao.FSSC22000);
+                                case "HACCP" -> certificacoes.add(Certificacao.HACCP);
+                                case "GMP" -> certificacoes.add(Certificacao.GMP);
+                            }
+                        }
+                    }
+            }
+            Produto produto = new ProdutoAlimentar(codigo, nome, descricao, quantidade, valorUnitario, isBiologico, taxa, certificacoes, categoria);
+            fatura.addProduto(produto);
+        }
+        else{
+            boolean hasPrescricao = linha[6].equals("True");
+            String medicoPrescritor = "";
+            CategoriaFarmacia categoria = null;
+            if(hasPrescricao){
+                medicoPrescritor = linha[7];
+            }
+            else{
+                switch (linha[7]){
+                    case "BELEZA" -> categoria = CategoriaFarmacia.BELEZA;
+                    case "BEM_ESTAR" -> categoria = CategoriaFarmacia.BEM_ESTAR;
+                    case "BEBES" -> categoria = CategoriaFarmacia.BEBES;
+                    case "ANIMAIS" -> categoria = CategoriaFarmacia.ANIMAIS;
+                    case "OUTROS" -> categoria = CategoriaFarmacia.OUTROS;
+                }
+            }
+            Produto produto = new ProdutoFarmacia(codigo, nome, descricao, quantidade, valorUnitario, hasPrescricao, medicoPrescritor, categoria);
+            fatura.addProduto(produto);
+        }
+    }
 }

@@ -20,14 +20,18 @@ public class Poofs {
     }
 
     private void executar() {
-        File ficheiro = new File("ficheiro.obj");
+        File ficheiroObj = new File("ficheiro.obj");
+        File importa = new File("importado.txt");
+        verificaFicheiro(importa);
+        File exporta = new File("exportado.txt");
+        verificaFicheiro(exporta);
 
-        if(ficheiro.exists() && ficheiro.isFile()){
-            System.out.println("Objeto");
-            empresa.carregaFicheiroObjeto(ficheiro);
+        if(ficheiroObj.exists() && ficheiroObj.isFile()){
+            System.out.println("lendo do ficheiro de objeto");
+            empresa.carregaFicheiroObjeto(ficheiroObj);
         }
         else{
-            System.out.println("Texto");
+            System.out.println("Lendo do ficheiro de texto");
             lerFicheiroTexto("ficheiroEntrada.txt");
         }
 
@@ -41,6 +45,8 @@ public class Poofs {
             System.out.println("5. Editar clientes");
             System.out.println("6. Visualizar Fatura");
             System.out.println("7. Editar Fatura");
+            System.out.println("8 Importar faturas");
+            System.out.println("9. Exportar faturas");
             System.out.println("0. Sair");
 
             int opcao = sc.nextInt();
@@ -54,21 +60,15 @@ public class Poofs {
                 case 5 -> editarClientes();
                 case 6 -> empresa.visualizarFaturas(verificarFatura());
                 case 7 -> editarFatura();
+                case 8 -> empresa.importarFaturas(importa);
+                case 9 -> empresa.exportarFaturas(exporta, verificarFatura());
                 case 0 -> continuar = false;
                 default -> System.out.println("Opção inválida!");
             }
         }
 
-        try {
-            if (!ficheiro.exists()) {
-                ficheiro.createNewFile();  // Criar o arquivo se não existir
-                System.out.println("Arquivo criado: " + ficheiro.getName());
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao criar o arquivo: " + e.getMessage());
-        }
-
-        empresa.atualizaFicheiroObjetos(ficheiro);
+        verificaFicheiro(ficheiroObj);
+        empresa.atualizaFicheiroObjetos(ficheiroObj);
 
         System.out.println("----- Estatisticas -----");
         System.out.println("Numero de faturas: " + empresa.quantidadeFaturas());
@@ -80,8 +80,19 @@ public class Poofs {
         sc.close();
     }
 
+    void verificaFicheiro(File ficheiro){
+        try {
+            if (!ficheiro.exists()) {
+                ficheiro.createNewFile();  // Criar o arquivo se não existir
+                System.out.println("Arquivo criado: " + ficheiro.getName());
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao criar o arquivo: " + e.getMessage());
+        }
+    }
+
     Fatura verificarFatura(){
-        System.out.println("Qual o numero da fatura a visualizar? ");
+        System.out.println("Qual o numero da fatura desejada? ");
         int numeroFatura = sc.nextInt();
         sc.nextLine();
         return empresa.procuraFatura(numeroFatura);
@@ -465,8 +476,9 @@ public class Poofs {
                 FileReader fr = new FileReader(f);
                 BufferedReader br = new BufferedReader(fr);
                 String line;
+                String[] linha;
                 while((line = br.readLine()) != null) {
-                    String[] linha = line.split(" ");
+                    linha = line.split(" ");
 
                     if(linha[0].equals("Cliente")){
                         String nome = linha[1];
@@ -493,66 +505,7 @@ public class Poofs {
                             linha = line.split(" ");
 
                             while(!linha[0].equals("Fatura")){
-                                String codigo = linha[1];
-                                String nome = linha[2];
-                                String descricao = linha[3];
-                                int quantidade = Integer.parseInt(linha[4]);
-                                double valorUnitario = Double.parseDouble(linha[5]);
-
-                                if(linha[0].equals("Alimentar")){
-                                    boolean isBiologico = linha[6].equals("True");
-                                    Taxa taxa = null;
-                                    ArrayList<Certificacao> certificacoes = new ArrayList<>();
-                                    CategoriaAlimentar categoria = null;
-                                    switch (linha[7]){
-                                        case "NORMAL":
-                                            taxa = Taxa.NORMAL;
-                                            break;
-                                        case "INTERMEDIARIA":
-                                            taxa = Taxa.INTERMEDIARIA;
-                                            switch (linha[8]){
-                                                case "CONGELADOS" -> categoria = CategoriaAlimentar.CONGELADOS;
-                                                case "ENLATADOS" -> categoria = CategoriaAlimentar.ENLATADOS;
-                                                case "VINHOS" -> categoria = CategoriaAlimentar.VINHOS;
-                                                case "OUTROS" -> categoria = CategoriaAlimentar.OUTROS;
-                                                default -> System.out.println("Erro, nenhuma das opçoes estao presentes");
-                                            }
-                                            break;
-                                        case "REDUZIDA":
-                                            taxa = Taxa.REDUZIDA;
-                                            for(int i = 8; i < 12; i++){
-                                                if(!linha[i].equals("NULL")){
-                                                    switch (linha[i]){
-                                                        case "ISO22000" -> certificacoes.add(Certificacao.ISO22000);
-                                                        case "FSSC22000" -> certificacoes.add(Certificacao.FSSC22000);
-                                                        case "HACCP" -> certificacoes.add(Certificacao.HACCP);
-                                                        case "GMP" -> certificacoes.add(Certificacao.GMP);
-                                                    }
-                                                }
-                                            }
-                                    }
-                                    Produto produto = new ProdutoAlimentar(codigo, nome, descricao, quantidade, valorUnitario, isBiologico, taxa, certificacoes, categoria);
-                                    fatura.addProduto(produto);
-                                }
-                                else{
-                                    boolean hasPrescricao = linha[6].equals("True");
-                                    String medicoPrescritor = "";
-                                    CategoriaFarmacia categoria = null;
-                                    if(hasPrescricao){
-                                        medicoPrescritor = linha[7];
-                                    }
-                                    else{
-                                        switch (linha[7]){
-                                            case "BELEZA" -> categoria = CategoriaFarmacia.BELEZA;
-                                            case "BEM_ESTAR" -> categoria = CategoriaFarmacia.BEM_ESTAR;
-                                            case "BEBES" -> categoria = CategoriaFarmacia.BEBES;
-                                            case "ANIMAIS" -> categoria = CategoriaFarmacia.ANIMAIS;
-                                            case "OUTROS" -> categoria = CategoriaFarmacia.OUTROS;
-                                        }
-                                    }
-                                    Produto produto = new ProdutoFarmacia(codigo, nome, descricao, quantidade, valorUnitario, hasPrescricao, medicoPrescritor, categoria);
-                                    fatura.addProduto(produto);
-                                }
+                                empresa.lerProdutosFicheiro(linha, fatura);
                                 line = br.readLine();
                                 if(line != null){
                                     linha = line.split(" ");

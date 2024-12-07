@@ -18,7 +18,11 @@ public abstract class Produto implements Serializable {
         this.valorUnitario = valorUnitario;
     }
 
-    String getNome(){ return nome;}
+    String getCodigo(){ return codigo; }
+    String getNome(){ return nome; }
+    String getDescricao(){ return descricao; }
+    int getQuantidade(){ return quantidade; }
+    double getValorUnitario(){ return valorUnitario; }
 
     // Metodo abstrato para calcular o IVA de acordo com o tipo de Produto
     abstract double calcularIVA(Localizacao localizacao);
