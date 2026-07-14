@@ -37,23 +37,6 @@ O projeto permite o gerenciamento de clientes, emissão de faturas, cálculo aut
 
 ---
 
-## Estrutura do projeto
-
-```
-src/
-├── cliente/
-├── fatura/
-├── produto/
-├── farmacia/
-├── alimentacao/
-├── util/
-└── Main.java
-```
-
-> A estrutura pode variar conforme a implementação.
-
----
-
 ## Como executar
 
 1. Clone o repositório
@@ -64,7 +47,7 @@ git clone https://github.com/seu-usuario/InvoiceFlow.git
 
 2. Abra o projeto na sua IDE de preferência (IntelliJ IDEA, Eclipse ou NetBeans).
 
-3. Compile e execute a classe principal.
+3. Compile e execute a classe principal "Poofs.java".
 
 ---
 
